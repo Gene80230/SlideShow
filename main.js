@@ -1,44 +1,47 @@
-var allButtons = $('#buttons > button')
+let n
+初始化()
 
-for(let i=0;i<allButtons.length;i++){
-    $(allButtons[i]).on('click',function(x){
-       var index = $(x.currentTarget).index()
-       var p = index * -300
-       $('#images').css({
-           transform:'translate(' + p + 'px)'
-       })
-       n = index 
-       activeButton(allButtons.eq(n))
+setInterval(()=>{
+    makeLeave(getImage(n)).one('transitionend',(e)=>{
+        makeEnter($(e.currentTarget))
     })
+    makeCurrent(getImage(n+1))
+    n++
+},3000)
+
+
+
+function getImage(n){
+    return $(`.images > img:nth-child(${x(n)})`)
 }
 
-var n=0;
-var size = allButtons.length
-playSlide(n % size)
 
-var timerId = setTimer()
-
-function setTimer(){
-    setInterval(() => {
-        n++;
-        playSlide(n % size)
-    },3000)
-}
-function playSlide(index){
-    allButtons.eq(index).trigger('click')
+function x(n){
+    if(n>3){
+        n = n%3
+        if(n ===0 ){
+            n = 3
+        }
+    }
+    return n
 }
 
-function activeButton($button){
-    $button.addClass('red').siblings('.red').removeClass('red')
+
+function 初始化(){
+    n = 1
+    $(`.images > img:nth-child(${x(n)})`).addClass('current')
+   .siblings().addClass('enter')
 }
-
-$('.window').on('mouseenter',function(){
-    clearInterval(timerId)
-})
-
-$('.window').on('mouseleave',function(){
-    timerId = setTimer()
-})
+function makeCurrent($node){
+    $node.removeClass('leave enter').addClass('current')
+}
+function makeLeave($node){
+    $node.removeClass('current enter').addClass('leave')
+    return $node
+}
+function makeEnter($node){
+    $node.removeClass('leave current').addClass('enter')
+}
 
 
 
